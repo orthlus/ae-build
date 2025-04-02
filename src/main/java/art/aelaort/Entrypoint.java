@@ -28,12 +28,16 @@ public class Entrypoint implements CommandLineRunner {
 		if (args.length >= 1) {
 			switch (args[0]) {
 				case "build" -> 			 build(slice(args, 1));
-				case "dbl" -> 				 localDb.localUpFromEntry(args);
-				case "dbl-down", "dbld" -> 	 localDb.localDown();
-				case "dbl-rerun-jooq",
-					 "dblrrj" -> 			 localDb.localRerunAndGenJooq(args);
-				case "dbp-status", "dbps" -> remoteDb.remoteStatus(args);
-				case "dbp-run", "dbpr" -> 	 remoteDb.remoteRun(args);
+				case "db" -> {
+					switch (args[1]) {
+						case "l" -> 				   localDb.localUpFromEntry(args);
+						case "l-down", "ld" ->		   localDb.localDown();
+						case "l-rerun-jooq", "lrrj" -> localDb.localRerunAndGenJooq(args);
+						case "pr-status", "prs" ->   remoteDb.remoteStatus(args);
+						case "pr-run", "prr" -> 	   remoteDb.remoteRun(args);
+						default -> log("unknown args\n" + usage());
+					}
+				}
 				default -> log("unknown args\n" + usage());
 			}
 		} else {
@@ -47,16 +51,17 @@ public class Entrypoint implements CommandLineRunner {
 		return """
 				usage:
 					build - build and deploy apps
-					            number of app (required for run)
-					                without args - printing apps list
+					        number of app (required for run)
+					        without args - printing apps list
 					\s
 					Databases (optional 1 arg - db name):
-					dbl                 - start local postgres and run migrations
-					dbl-down, dbld      - down local postgres
-					dbl-rerun-jooq,     - local down and up, if passed app id - run jooq
-					dblrrj
-					dbp-status, dbps    - prod migrations status
-					dbp-run, dbpr       - execute prod migrations""";
+					db:
+					l                 - start local postgres and run migrations
+					l-down, ld      - down local postgres
+					l-rerun-jooq,     - local down and up, if passed app id - run jooq
+					lrrj
+					pr-status, prs    - prod migrations status
+					pr-run, prr       - execute prod migrations""";
 	}
 
 	private void build(String[] args) {
