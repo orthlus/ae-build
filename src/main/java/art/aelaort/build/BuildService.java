@@ -334,6 +334,14 @@ public class BuildService {
                 .collect(Collectors.joining());
     }
 
+	public void printConfigNoDeprecated() {
+		List<Job> jobs = jobsProvider.readBuildConfig();
+		jobs = jobs.stream()
+				.filter(job -> !job.isDeprecated())
+				.toList();
+		log(jobsTextTable.getJobsTableString(jobs));
+	}
+
 	public void printConfigWithDeprecated() {
 		log(jobsTextTable.getJobsTableString(jobsProvider.readBuildConfig()));
 	}

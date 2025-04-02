@@ -32,7 +32,7 @@ public class Entrypoint implements CommandLineRunner {
 			System.exit(1);
 		} else {
 			switch (args[0]) {
-				case "build" -> 			 build(slice(args, 1));
+				case "build" -> build(slice(args, 1));
 				case "db" -> {
 					if (args.length < 2) {
 						log(wrapRed("with 'db' need another arg"));
@@ -43,7 +43,7 @@ public class Entrypoint implements CommandLineRunner {
 						case "l" -> 				   localDb.localUp(slice(args, 2));
 						case "l-down", "ld" ->		   localDb.localDown();
 						case "l-rerun-jooq", "lrrj" -> localDb.localRerunAndGenJooq(slice(args, 2));
-						case "pr-status", "prs" ->   remoteDb.remoteStatus(slice(args, 2));
+						case "pr-status", "prs" ->     remoteDb.remoteStatus(slice(args, 2));
 						case "pr-run", "prr" -> 	   remoteDb.remoteRun(slice(args, 2));
 						default -> log("unknown args\n" + usage());
 					}
@@ -58,29 +58,33 @@ public class Entrypoint implements CommandLineRunner {
 				usage:
 					build - build and deploy apps
 					        number of app (required for run)
-					        without args - printing apps list
+					        with -a - print all
+					        no args - print all without deprecated
 					\s
 					Databases (optional 1 arg - db name):
 					db:
-					l                 - start local postgres and run migrations
-					l-down, ld      - down local postgres
-					l-rerun-jooq,     - local down and up, if passed app id - run jooq
-					lrrj
-					pr-status, prs    - prod migrations status
-					pr-run, prr       - execute prod migrations""";
+					l                  - start local postgres and run migrations
+					l-down, ld         - down local postgres
+					l-rerun-jooq, lrrj - local down and up, if passed app id - run jooq
+					pr-status, prs     - prod migrations status
+					pr-run, prr        - execute prod migrations""";
 	}
 
 	private void build(String[] args) {
 		if (args.length == 0) {
-			buildService.printConfigWithDeprecated();
+			buildService.printConfigNoDeprecated();
 		} else {
 			int id;
 
 			try {
 				id = parseInt(args[0]);
 			} catch (NumberFormatException ignored) {
-				String type = args[0];
-				buildService.printConfig(type);
+				String probablyType = args[0];
+				if (probablyType.equals("-a")) {
+					buildService.printConfigWithDeprecated();
+				} else {
+					buildService.printConfig(probablyType);
+				}
 				return;
 			}
 
