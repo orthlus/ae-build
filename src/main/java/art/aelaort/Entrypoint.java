@@ -40,11 +40,11 @@ public class Entrypoint implements CommandLineRunner {
 						System.exit(1);
 					}
 					switch (args[1]) {
-						case "l" -> 				   localDb.localUpFromEntry(args);
+						case "l" -> 				   localDb.localUp(slice(args, 2));
 						case "l-down", "ld" ->		   localDb.localDown();
-						case "l-rerun-jooq", "lrrj" -> localDb.localRerunAndGenJooq(args);
-						case "pr-status", "prs" ->   remoteDb.remoteStatus(args);
-						case "pr-run", "prr" -> 	   remoteDb.remoteRun(args);
+						case "l-rerun-jooq", "lrrj" -> localDb.localRerunAndGenJooq(slice(args, 2));
+						case "pr-status", "prs" ->   remoteDb.remoteStatus(slice(args, 2));
+						case "pr-run", "prr" -> 	   remoteDb.remoteRun(slice(args, 2));
 						default -> log("unknown args\n" + usage());
 					}
 				}

@@ -19,8 +19,8 @@ public class DbUtils {
 			if (args == null) {
 				return Files.readString(props.getDefaultNameFile());
 			}
-			if (args.length > 1) {
-				return args[1];
+			if (args.length > 0) {
+				return args[0];
 			}
 			return Files.readString(props.getDefaultNameFile());
 		} catch (IOException e) {

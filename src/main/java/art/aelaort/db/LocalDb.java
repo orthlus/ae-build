@@ -39,19 +39,19 @@ public class LocalDb {
 		throw new RuntimeException(response.stderr());
 	}
 
-	public void localUpFromEntry(String[] args) {
+	public void localUp(String[] args) {
 		try {
-			localUp(args);
+			localUp0(args);
 		} catch (LocalDbMigrationsFailedException e) {
 			log(wrapRed("миграции упали(("));
 		}
 	}
 
 	public void localUp() {
-		localUp(null);
+		localUp0(null);
 	}
 
-	private void localUp(String[] args) {
+	private void localUp0(String[] args) {
 		String command = "docker run -d -p 5433:5432 --env POSTGRES_PASSWORD=postgres --name %s postgres:16".formatted(dbContainerName);
 		systemProcess.callProcessInheritIO(command);
 		log("PostgreSQL (5433) - started");
@@ -86,7 +86,7 @@ public class LocalDb {
 			localUp();
 
 			if (args.length > 0) {
-				Job job = jobsProvider.getJobById(parseInt(args[1]));
+				Job job = jobsProvider.getJobById(parseInt(args[0]));
 				Path srcDir = job.resolveSrcDir(buildProperties.srcRootDir());
 				String jooqCommand = "mvn clean jooq-codegen:generate";
 				systemProcess.callProcessForBuild(jooqCommand, srcDir);
