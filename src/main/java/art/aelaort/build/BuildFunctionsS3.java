@@ -1,5 +1,6 @@
-package art.aelaort;
+package art.aelaort.build;
 
+import art.aelaort.S3Params;
 import art.aelaort.properties.S3Properties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
