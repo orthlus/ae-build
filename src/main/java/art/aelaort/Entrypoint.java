@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import static art.aelaort.utils.ColoredConsoleTextUtils.wrapRed;
 import static art.aelaort.utils.Utils.log;
 import static art.aelaort.utils.Utils.slice;
 import static java.lang.Integer.parseInt;
@@ -25,10 +26,19 @@ public class Entrypoint implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		if (args.length >= 1) {
+		if (args.length < 1) {
+			log(wrapRed("at least one arg required"));
+			log(usage());
+			System.exit(1);
+		} else {
 			switch (args[0]) {
 				case "build" -> 			 build(slice(args, 1));
 				case "db" -> {
+					if (args.length < 2) {
+						log(wrapRed("with 'db' need another arg"));
+						log(usage());
+						System.exit(1);
+					}
 					switch (args[1]) {
 						case "l" -> 				   localDb.localUpFromEntry(args);
 						case "l-down", "ld" ->		   localDb.localDown();
@@ -40,10 +50,6 @@ public class Entrypoint implements CommandLineRunner {
 				}
 				default -> log("unknown args\n" + usage());
 			}
-		} else {
-			log("at least one arg required");
-			log(usage());
-			System.exit(1);
 		}
 	}
 
