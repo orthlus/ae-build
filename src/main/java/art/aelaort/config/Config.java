@@ -1,5 +1,7 @@
-package art.aelaort;
+package art.aelaort.config;
 
+import art.aelaort.DefaultS3Params;
+import art.aelaort.S3Params;
 import art.aelaort.properties.S3Properties;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
