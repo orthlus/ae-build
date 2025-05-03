@@ -66,7 +66,7 @@ public class Entrypoint implements CommandLineRunner {
 					l                    - start local postgres and run migrations
 					l-down, ld           - down local postgres
 					l-rerun-jooq, lrrj   - local down and up, if passed app id - run jooq
-					prod-status, prs     - prod migrations status
+					prod-status, prods   - prod migrations status
 					prod-run        - execute prod migrations""";
 	}
 
