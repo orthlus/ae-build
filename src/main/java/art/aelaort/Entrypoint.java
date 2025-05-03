@@ -40,11 +40,11 @@ public class Entrypoint implements CommandLineRunner {
 						System.exit(1);
 					}
 					switch (args[1]) {
-						case "l" -> 				   localDb.localUp(slice(args, 2));
-						case "l-down", "ld" ->		   localDb.localDown();
-						case "l-rerun-jooq", "lrrj" -> localDb.localRerunAndGenJooq(slice(args, 2));
-						case "pr-status", "prs" ->     remoteDb.remoteStatus(slice(args, 2));
-						case "pr-run", "prr" -> 	   remoteDb.remoteRun(slice(args, 2));
+						case "l" ->						localDb.localUp(slice(args, 2));
+						case "l-down", "ld" ->			localDb.localDown();
+						case "l-rerun-jooq", "lrrj" ->	localDb.localRerunAndGenJooq(slice(args, 2));
+						case "prod-status", "prods" ->	remoteDb.remoteStatus(slice(args, 2));
+						case "prod-run" ->				remoteDb.remoteRun(slice(args, 2));
 						default -> log("unknown args\n" + usage());
 					}
 				}
@@ -63,11 +63,11 @@ public class Entrypoint implements CommandLineRunner {
 					\s
 					Databases (optional 1 arg - db name):
 					db:
-					l                  - start local postgres and run migrations
-					l-down, ld         - down local postgres
-					l-rerun-jooq, lrrj - local down and up, if passed app id - run jooq
-					pr-status, prs     - prod migrations status
-					pr-run, prr        - execute prod migrations""";
+					l                    - start local postgres and run migrations
+					l-down, ld           - down local postgres
+					l-rerun-jooq, lrrj   - local down and up, if passed app id - run jooq
+					prod-status, prs     - prod migrations status
+					prod-run        - execute prod migrations""";
 	}
 
 	private void build(String[] args) {
