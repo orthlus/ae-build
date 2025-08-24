@@ -20,6 +20,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.OrFileFilter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import org.zeroturnaround.zip.ZipUtil;
 
@@ -283,8 +284,13 @@ public class BuildService {
 
 	@SneakyThrows
 	public void copySrcDirToTmpDir(Job job, Path tmpDir) {
+		String[] excludedDirs = buildProperties.excludeDirs();
+		if (job.isCopyGitInBuild()) {
+			excludedDirs = ArrayUtils.removeElement(excludedDirs, ".git");
+		}
+
 		FileFilter excludeDirsFilter = new OrFileFilter(Stream
-				.of(buildProperties.excludeDirs())
+				.of(excludedDirs)
 				.map(FileFilterUtils::nameFileFilter)
 				.map(FileFilterUtils::makeDirectoryOnly)
 				.toList()
