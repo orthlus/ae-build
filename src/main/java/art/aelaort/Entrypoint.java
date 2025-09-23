@@ -1,6 +1,7 @@
 package art.aelaort;
 
 import art.aelaort.build.BuildConfigService;
+import art.aelaort.build.BuildLaunchUtils;
 import art.aelaort.build.BuildService;
 import art.aelaort.build.JobsProvider;
 import art.aelaort.db.LocalDb;
@@ -73,31 +74,20 @@ public class Entrypoint implements CommandLineRunner {
 	}
 
 	private void build(String[] args) {
-		if (args.length == 0) {
-			buildConfigService.printConfigNoDeprecated();
-		} else {
-			int id;
-
-			try {
-				id = parseInt(args[0]);
-			} catch (NumberFormatException ignored) {
-				String probablyType = args[0];
-				if (probablyType.equals("-a")) {
-					buildConfigService.printConfigWithDeprecated();
-				} else {
-					buildConfigService.printConfig(probablyType);
+		switch (BuildLaunchUtils.build(args)) {
+			case printConfig -> buildConfigService.printConfig(args[0]);
+			case printConfigNoDeprecated -> buildConfigService.printConfigNoDeprecated();
+			case printConfigWithDeprecated -> buildConfigService.printConfigWithDeprecated();
+			case build -> {
+				try {
+					Job job = jobsProvider.getJobById(parseInt(args[0]));
+					boolean isBuildDockerNoCache = buildService.isBuildDockerNoCache(args);
+					buildService.run(job, isBuildDockerNoCache);
+				} catch (TooManyDockerFilesException e) {
+					log("too many docker-files");
+				} catch (BuildJobNotFoundException e) {
+					log("job %s not found\n", args[1]);
 				}
-				return;
-			}
-
-			try {
-				Job job = jobsProvider.getJobById(id);
-				boolean isBuildDockerNoCache = buildService.isBuildDockerNoCache(args);
-				buildService.run(job, isBuildDockerNoCache);
-			} catch (TooManyDockerFilesException e) {
-				log("too many docker-files");
-			} catch (BuildJobNotFoundException e) {
-				log("job %s not found\n", args[1]);
 			}
 		}
 	}
