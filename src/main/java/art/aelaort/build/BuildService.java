@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static art.aelaort.utils.ColoredConsoleTextUtils.wrapRed;
@@ -48,8 +47,6 @@ public class BuildService {
 	private final BuildFunctionsS3 buildFunctionsS3;
 	private final S3Properties s3Properties;
 	private final BuildProperties buildProperties;
-	private final JobsTextTable jobsTextTable;
-	private final JobsProvider jobsProvider;
 
 	private final IOFileFilter dockerLookupFilter =
 			FileFilterUtils.suffixFileFilter("dockerfile", IOCase.INSENSITIVE);
@@ -320,36 +317,5 @@ public class BuildService {
 
 	public boolean isBuildDockerNoCache(String[] args) {
 		return Arrays.asList(args).contains("clean");
-	}
-
-	public void printConfig(String typeAlias) {
-		List<Job> jobs = jobsProvider.readBuildConfig();
-		jobs = jobs.stream()
-				.filter(job -> buildTypeAlias(job.getBuildType()).equals(typeAlias))
-				.filter(job -> !job.isDeprecated())
-				.toList();
-		log(jobsTextTable.getJobsTableString(jobs));
-	}
-
-	private String buildTypeAlias(String input) {
-        if (input == null || input.isEmpty()) {
-            return "";
-        }
-        return Arrays.stream(input.split("_"))
-                .filter(part -> !part.isEmpty())
-                .map(part -> part.substring(0, 1))
-                .collect(Collectors.joining());
-    }
-
-	public void printConfigNoDeprecated() {
-		List<Job> jobs = jobsProvider.readBuildConfig();
-		jobs = jobs.stream()
-				.filter(job -> !job.isDeprecated())
-				.toList();
-		log(jobsTextTable.getJobsTableString(jobs));
-	}
-
-	public void printConfigWithDeprecated() {
-		log(jobsTextTable.getJobsTableString(jobsProvider.readBuildConfig()));
 	}
 }

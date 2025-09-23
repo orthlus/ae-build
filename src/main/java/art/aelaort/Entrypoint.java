@@ -1,5 +1,6 @@
 package art.aelaort;
 
+import art.aelaort.build.BuildConfigService;
 import art.aelaort.build.BuildService;
 import art.aelaort.build.JobsProvider;
 import art.aelaort.db.LocalDb;
@@ -23,6 +24,7 @@ public class Entrypoint implements CommandLineRunner {
 	private final JobsProvider jobsProvider;
 	private final LocalDb localDb;
 	private final RemoteDb remoteDb;
+	private final BuildConfigService buildConfigService;
 
 	@Override
 	public void run(String... args) {
@@ -72,7 +74,7 @@ public class Entrypoint implements CommandLineRunner {
 
 	private void build(String[] args) {
 		if (args.length == 0) {
-			buildService.printConfigNoDeprecated();
+			buildConfigService.printConfigNoDeprecated();
 		} else {
 			int id;
 
@@ -81,9 +83,9 @@ public class Entrypoint implements CommandLineRunner {
 			} catch (NumberFormatException ignored) {
 				String probablyType = args[0];
 				if (probablyType.equals("-a")) {
-					buildService.printConfigWithDeprecated();
+					buildConfigService.printConfigWithDeprecated();
 				} else {
-					buildService.printConfig(probablyType);
+					buildConfigService.printConfig(probablyType);
 				}
 				return;
 			}
