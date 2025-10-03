@@ -213,14 +213,16 @@ public class BuildService {
 		String name = job.getName();
 		Path dockerfile = lookupOneDockerfile(tmpDir);
 		String dockerUrl = job.getDockerUrl() == null ? buildProperties.dockerRegistryUrl() : job.getDockerUrl();
+		String dockerTag = job.getDockerTag() == null ? "latest" : job.getDockerTag();
+		String dockerImage = job.getDockerImage() == null ? name : job.getDockerImage();
 
 		if (isBuildDockerNoCache) {
-			run("docker build --no-cache -t %s:latest -f %s %s".formatted(name, dockerfile, tmpDir), null);
+			run("docker build --no-cache -t %s:%s -f %s %s".formatted(dockerImage, dockerTag, dockerfile, tmpDir), null);
 		} else {
-			run("docker build -t %s:latest -f %s %s".formatted(name, dockerfile, tmpDir), null);
+			run("docker build -t %s:%s -f %s %s".formatted(dockerImage, dockerTag, dockerfile, tmpDir), null);
 		}
-		run("docker image tag %s:latest %s/%s:latest".formatted(name, dockerUrl, name), null);
-		run("docker image push %s/%s:latest".formatted(dockerUrl, name), null);
+		run("docker image tag %s:%s %s/%s:%s".formatted(dockerImage, dockerTag, dockerUrl, dockerImage, dockerTag), null);
+		run("docker image push %s/%s:%s".formatted(dockerUrl, dockerImage, dockerTag), null);
 	}
 
 	private void run(String command, Path tmpDir) {
