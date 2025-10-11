@@ -6,6 +6,7 @@ import art.aelaort.utils.system.SystemProcess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static art.aelaort.utils.ColoredConsoleTextUtils.wrapRed;
@@ -50,15 +51,21 @@ public class RemoteDb {
 	}
 
 	private void sshUp(Path dir) {
-		String command = "docker compose -f %s up -d --build"
-				.formatted(dir.getParent().resolve(props.getRemoteSshDockerComposeFilename()));
+		Path file = dir.getParent().resolve(props.getRemoteSshDockerComposeFilename());
+		if (Files.notExists(file)) {
+			return;
+		}
+		String command = "docker compose -f %s up -d --build".formatted(file);
 		systemProcess.callProcessInheritIO(command);
 		log("SSH tunnel - started");
 	}
 
 	private void sshDown(Path dir) {
-		String command = "docker compose -f %s down"
-				.formatted(dir.getParent().resolve(props.getRemoteSshDockerComposeFilename()));
+		Path file = dir.getParent().resolve(props.getRemoteSshDockerComposeFilename());
+		if (Files.notExists(file)) {
+			return;
+		}
+		String command = "docker compose -f %s down".formatted(file);
 		systemProcess.callProcessInheritIO(command);
 		log("SSH tunnel - stopped");
 	}
