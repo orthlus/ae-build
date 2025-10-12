@@ -4,6 +4,7 @@ import art.aelaort.build.BuildConfigService;
 import art.aelaort.build.BuildLaunchUtils;
 import art.aelaort.build.BuildService;
 import art.aelaort.build.JobsProvider;
+import art.aelaort.db.DbListService;
 import art.aelaort.db.LocalDb;
 import art.aelaort.db.RemoteDb;
 import art.aelaort.exceptions.BuildJobNotFoundException;
@@ -26,6 +27,7 @@ public class Entrypoint implements CommandLineRunner {
 	private final LocalDb localDb;
 	private final RemoteDb remoteDb;
 	private final BuildConfigService buildConfigService;
+	private final DbListService dbListService;
 
 	@Override
 	public void run(String... args) {
@@ -39,6 +41,7 @@ public class Entrypoint implements CommandLineRunner {
 				case "db" -> {
 					if (args.length < 2) {
 						log(wrapRed("with 'db' need another arg"));
+						dbListService.printDbList();
 						log(usage());
 						System.exit(1);
 					}
