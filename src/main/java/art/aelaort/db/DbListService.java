@@ -19,7 +19,7 @@ public class DbListService {
 	private final DbManageProperties dbManageProperties;
 
 	public void printDbList() {
-		try (Stream<Path> list = Files.walk(dbManageProperties.getMigrationsDir(), 1)) {
+		try (Stream<Path> list = Files.list(dbManageProperties.getMigrationsDir())) {
 			List<String> names = list
 					.filter(Files::isDirectory)
 					.map(p -> p.getFileName().toString())
