@@ -62,8 +62,9 @@ public class Entrypoint implements CommandLineRunner {
 	private String usage() {
 		return """
 				usage:
-					build - build and deploy apps
+					build - build and deploy apps:
 					        number of app (required for run)
+					        number and -d - build without approve
 					        with -a - print all
 					        no args - print all without deprecated
 					\s
@@ -76,6 +77,7 @@ public class Entrypoint implements CommandLineRunner {
 					prod-run        - execute prod migrations""";
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	private void build(String[] args) {
 		switch (BuildLaunchUtils.build(args)) {
 			case printConfig -> buildConfigService.printConfig(args[0]);
@@ -85,7 +87,11 @@ public class Entrypoint implements CommandLineRunner {
 				try {
 					Job job = jobsProvider.getJobById(parseInt(args[0]));
 					boolean isBuildDockerNoCache = buildService.isBuildDockerNoCache(args);
-					buildService.run(job, isBuildDockerNoCache);
+					if (args.length > 1 && args[1].equals("-d")) {
+						buildService.run(job, isBuildDockerNoCache, false);
+					} else {
+						buildService.run(job, isBuildDockerNoCache, true);
+					}
 				} catch (TooManyDockerFilesException e) {
 					log("too many docker-files");
 				} catch (BuildJobNotFoundException e) {

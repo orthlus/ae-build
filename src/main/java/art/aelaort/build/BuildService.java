@@ -64,18 +64,30 @@ public class BuildService {
 		};
 	}
 
-	public void run(Job job, boolean isBuildDockerNoCache) {
+	public void run(Job job, boolean isBuildDockerNoCache, boolean needAskApprove) {
 		try {
-			if (isApproved(job)) {
-				Path tmpDir = utils.createTmpDir();
-				cleanSrcDir(job);
-				copySrcDirToTmpDir(job, tmpDir);
-				copyDefaultDockerfile(job, tmpDir);
-				fillSecretsToTmpDir(job, tmpDir);
-				runDbIfNeed(job);
-				build(job, tmpDir, isBuildDockerNoCache);
-				cleanTmp(tmpDir);
+			if (needAskApprove) {
+				if (isApproved(job)) {
+					run0(job, isBuildDockerNoCache);
+				}
+			} else {
+				run0(job, isBuildDockerNoCache);
 			}
+		} catch (LocalDbMigrationsFailedException e) {
+			log(wrapRed("миграции упали(("));
+		}
+	}
+
+	private void run0(Job job, boolean isBuildDockerNoCache) {
+		try {
+			Path tmpDir = utils.createTmpDir();
+			cleanSrcDir(job);
+			copySrcDirToTmpDir(job, tmpDir);
+			copyDefaultDockerfile(job, tmpDir);
+			fillSecretsToTmpDir(job, tmpDir);
+			runDbIfNeed(job);
+			build(job, tmpDir, isBuildDockerNoCache);
+			cleanTmp(tmpDir);
 		} catch (LocalDbMigrationsFailedException e) {
 			log(wrapRed("миграции упали(("));
 		}
