@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+import static art.aelaort.utils.ColoredConsoleTextUtils.wrapCyan;
 import static art.aelaort.utils.ColoredConsoleTextUtils.wrapRed;
 import static art.aelaort.utils.Utils.log;
 
@@ -80,6 +81,7 @@ public class BuildService {
 
 	private void run0(Job job, boolean isBuildDockerNoCache) {
 		try {
+			log(wrapCyan("building %s ...".formatted(job.getName())));
 			Path tmpDir = utils.createTmpDir();
 			cleanSrcDir(job);
 			copySrcDirToTmpDir(job, tmpDir);

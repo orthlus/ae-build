@@ -21,6 +21,10 @@ public class ColoredConsoleTextUtils {
 		return ANSI_BLUE + text + ANSI_RESET;
 	}
 
+	public static String wrapCyan(String text) {
+		return ANSI_CYAN + text + ANSI_RESET;
+	}
+
 	public static String wrapGreen(String text) {
 		return ANSI_GREEN + text + ANSI_RESET;
 	}
