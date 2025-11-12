@@ -30,7 +30,7 @@ public class DbUtils {
 
 	public String readDbUrl(Path dbDir) {
 		try {
-			return Files.readString(dbDir.resolve(props.getUrlFilename()));
+			return Files.readString(dbDir.resolve(props.getUrlFilename())).strip();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
